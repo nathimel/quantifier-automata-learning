@@ -70,12 +70,8 @@ class PFA:
         num_transitions = len(x) + 1
         logprob = torch.log(torch.zeros(num_transitions, self.num_states))
 
-        # if x == (1, ):
-            # breakpoint()
-
         # Initialize the forward probabilities for the first position
         logprob[0] = torch.log(self.init)
-        # breakpoint()
         
         # Iterate over sequence 
         for i in range(1, num_transitions):
@@ -98,8 +94,6 @@ class PFA:
             logprob[-1, state_idx] + torch.log(self.final[state_idx])
             for state_idx in range(self.num_states)
         ]), -1)
-
-        # breakpoint()
 
         return total_logprob
 

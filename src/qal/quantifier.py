@@ -45,7 +45,7 @@ every = PFA(
         [[0., 1.,], 
          [1., 0.,]],
         # q1
-        [[1., 0.,],
+        [[0., 1.,],
          [0., 1.,]]
     ]),
     final = torch.tensor([1., 0.,]) # also one-hot on first state
@@ -64,7 +64,25 @@ some = PFA(
     final = torch.tensor([0., 1.,])
 )
 
+at_least_three = PFA(
+    num_states = 4,
+    alphabet=[0,1],
+    init = torch.tensor([1., 0., 0., 0.,]),
+    T = torch.tensor([
+        [[1., 0., 0., 0.], 
+         [0., 1., 0., 0.]],
+        [[0., 1., 0., 0.], 
+         [0., 0., 1., 0.]],
+        [[0., 0., 1., 0.], 
+         [0., 0., 0., 1.]],
+        [[0., 0., 0., 1.], 
+         [0., 0., 0., 1.,]],
+    ]),
+    final = torch.tensor([0., 0., 0., 1.,])
+)
+
 quantifier_map = {
     "every": every,
     "some": some,
+    "at_least_three": at_least_three,
 }
