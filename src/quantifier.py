@@ -1,1 +1,0 @@
-"""Module defining various quantifiers as (reference) semantic automata, for data-generation and comparison."""

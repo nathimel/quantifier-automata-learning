@@ -1,0 +1,20 @@
+learning:
+  data:
+    max_bitstring_length: 4
+    train_test_split: 0.7
+    balanced: true
+    overwrite: false
+  optimizer: Adam
+  learning_rate: 1.0e-05
+  batch_size: 8
+quantifier:
+  name: every
+seed: 42
+filepaths:
+  bitstrings_dir: data/bitstrings
+  quantifier_data_dir: data/quantifier_data
+  curve_subdir: seed=${seed}
+  experiment_subdir: null
+  leaf_subdir: ${filepaths.experiment_subdir}
+  hydra_run_root: outputs
+  hydra_sweep_root: multirun

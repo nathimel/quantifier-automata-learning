@@ -1,6 +1,7 @@
 """Module defining the Probabilistic Automata used to learn semantic automata."""
 
 import torch
+from typing import Iterable
 
 class PFA:
 
@@ -37,7 +38,7 @@ class PFA:
     def __init__(
         self,
         num_states: int,
-        alphabet: set[int],
+        alphabet: Iterable[int],
         init: torch.Tensor,
         T: torch.Tensor,
         final: torch.Tensor,
@@ -57,7 +58,7 @@ class PFA:
         """
 
         self.num_states = num_states
-        self.alphabet = tuple(sorted(alphabet))
+        self.alphabet = tuple(sorted(set(alphabet)))
         self.init = init
         self.T = T
         self.final = final
@@ -66,29 +67,39 @@ class PFA:
         """Compute the log probability of the string x using the Forward algorithm."""
 
         # Forward algorithm
-        logprob = torch.zeros(len(x), self.num_states)
+        num_transitions = len(x) + 1
+        logprob = torch.log(torch.zeros(num_transitions, self.num_states))
 
-        # iterate over all initial states
-        for state_idx in range(self.num_states):
+        # if x == (1, ):
+            # breakpoint()
 
-            # first element of sequence
-            logprob[0, state_idx] = torch.log(self.init[state_idx])
-
-            # iterate over sequence
-            for i in range(1, len(x)):
-                symbol_idx = self.symbol_to_index(x[i])
-                logprob[i, state_idx] = sum([
-                    logprob[i-1, from_state_idx, state_idx] # p(i-1, q')
-                    + self.T[from_state_idx, symbol_idx, state_idx] # p(q',a,q)
-                    for from_state_idx in range(self.num_states)
-                ])
+        # Initialize the forward probabilities for the first position
+        logprob[0] = torch.log(self.init)
+        # breakpoint()
         
-        # compute total probability
-        total_logprob = sum([
-            # prob(|x|, q) * F(q)
-            logprob[-1, state_idx] + self.final[state_idx] 
+        # Iterate over sequence 
+        for i in range(1, num_transitions):
+            
+            # Although we have already 'transitioned' into the initial state, we have not read the first symbol yet.
+            symbol_idx = self.symbol_to_index(x[i-1])
+
+            for state_idx in range(self.num_states):
+                logprob[i, state_idx] = torch.logsumexp(torch.tensor([
+                    # p(i-1, q')
+                    logprob[i-1, from_state_idx]
+                    # p(q', a, q)
+                    + torch.log(self.T[from_state_idx, symbol_idx, state_idx])
+                    for from_state_idx in range(self.num_states)
+                    ]), -1)
+        
+        # Compute the total probability by summing over the final state probabilities
+        total_logprob = torch.logsumexp(torch.tensor([
+            # sum_q prob(|x|, q) * F(q)
+            logprob[-1, state_idx] + torch.log(self.final[state_idx])
             for state_idx in range(self.num_states)
-        ])
+        ]), -1)
+
+        # breakpoint()
 
         return total_logprob
 
