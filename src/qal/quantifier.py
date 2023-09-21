@@ -10,30 +10,16 @@ class QPFA(PFA):
     """A QPFA (Quantifier PFA) is just a PFA with some default parameters, and models a semantic automaton.
     """
 
-    def __init__(self, init: torch.Tensor, T: torch.Tensor, final: torch.Tensor) -> None:
+    def __init__(self, T: torch.Tensor, final: torch.Tensor) -> None:
         num_states, num_symbols, _ = T.size()
-        alphabet = range(num_symbols)
-        super().__init__(num_states, alphabet, init, T, final)
 
-
-class DefaultQPFA(QPFA):
-        
-    def __init__(self, num_states: int) -> None:
-
-        # Hard-code initial state as first state using one-hot
+        # assume first state is always initial
         init = torch.zeros(num_states)
-        init[0] = 1.0
+        init[0] = 1.
 
-        # final state distribution is uniform
-        final = torch.ones(num_states) / num_states 
-        final = torch.ones(num_states)
+        alphabet = range(num_symbols) # 2
 
-        # state-transition distribution is uniform
-        # Assume binary alphabet
-        T = torch.ones([num_states, len(BINARY_ALPHABET), num_states])
-
-        super().__init__(init, T, final)
-
+        super().__init__(num_states, alphabet, init, T, final)
 
 
 every = PFA(

@@ -111,12 +111,11 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task:
-    - learning.data.overwrite=True
+    task: []
   job:
-    name: setup
+    name: main
     chdir: true
-    override_dirname: learning.data.overwrite=True
+    override_dirname: ''
     id: ???
     num: ???
     config_name: config

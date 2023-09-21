@@ -96,6 +96,24 @@ class PFA:
         ]), -1)
 
         return total_logprob
+    
+    def prob(self, seqs: torch.Tensor, seq_lengths: torch.Tensor) -> torch.Tensor: 
+        """Convenience function for getting a tensor of probabilities for a batch of strings.
+        
+        Args:
+            seqs: a Tensor of ints, corresponding to binary strings padded by 2s to be of consistent length
+
+            seq_lengths: a Tensor of ints, corresponding to the original sequence lengths of binary strings before padding
+        """
+        log_probs = torch.tensor([
+            self.logp_string(
+                tuple(seq[:seq_lengths[idx]].tolist())
+                ) 
+            for idx, seq in enumerate(seqs)
+            ])
+        probs = log_probs.exp()
+        return probs
+
 
     def symbol_to_index(self, symbol: int):
         return self.alphabet.index(symbol)

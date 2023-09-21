@@ -1,8 +1,8 @@
 """Various helper/utility functions."""
 
+import hydra
 import os
 import torch
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Random
@@ -30,4 +30,5 @@ def ensure_dir(path: str) -> None:
         os.makedirs(path)
         print(f"Created directory {path}.")
 
-
+def get_quantifier_data_fn(config):
+    return os.path.join(os.path.join(hydra.utils.get_original_cwd(), config.filepaths.quantifier_data_dir), f"{config.learning.data.max_bitstring_length}.csv")

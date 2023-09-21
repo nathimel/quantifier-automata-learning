@@ -1,15 +1,19 @@
 learning:
   data:
-    max_bitstring_length: 4
+    max_bitstring_length: 10
     train_test_split: 0.7
     balanced: true
-    overwrite: true
+    overwrite: false
+  epochs: 10
   optimizer: Adam
   learning_rate: 1.0e-05
   batch_size: 8
+  init_temperature: 0.01
+  num_states: 2
 quantifier:
   name: every
 seed: 42
+verbose: true
 filepaths:
   bitstrings_dir: data/bitstrings
   quantifier_data_dir: data/quantifier_data
