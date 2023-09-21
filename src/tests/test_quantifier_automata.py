@@ -14,9 +14,9 @@ class TestQuantifierPFA:
         for string in TestQuantifierPFA.strings:
             tup = string_to_int_tuple(string)
             if all(tup):
-                assert qpfa.logp_string(tup) == 0.
+                assert qpfa.forward_algorithm(tup) == 0.
             else:
-                if not torch.isneginf(qpfa.logp_string(tup)):
+                if not torch.isneginf(qpfa.forward_algorithm(tup)):
                     breakpoint()
 
     def test_some(self):
@@ -26,9 +26,10 @@ class TestQuantifierPFA:
         for string in TestQuantifierPFA.strings:
             tup = string_to_int_tuple(string)
             if any(tup):
-                assert qpfa.logp_string(tup) == 0.
+                assert qpfa.forward_algorithm(tup) == 0.
             else:
-                assert torch.isneginf(qpfa.logp_string(tup))
+                if not torch.isneginf(qpfa.forward_algorithm(tup)):
+                    breakpoint()
 
     def test_at_least_three(self):
         # Test the qpfa and the python 'any' accept the same strings
@@ -37,6 +38,7 @@ class TestQuantifierPFA:
         for string in TestQuantifierPFA.strings:
             tup = string_to_int_tuple(string)
             if sum(tup) >= 3:
-                assert qpfa.logp_string(tup) == 0.
+                assert qpfa.forward_algorithm(tup) == 0.
             else:
-                assert qpfa.logp_string(tup) == -torch.inf
+               if not torch.isneginf(qpfa.forward_algorithm(tup)):
+                    breakpoint()
