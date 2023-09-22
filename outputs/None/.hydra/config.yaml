@@ -4,12 +4,12 @@ learning:
     train_test_split: 0.7
     balanced: true
     overwrite: false
-  epochs: 10
+  epochs: 10000.0
   optimizer: Adam
   learning_rate: 1.0e-05
-  batch_size: 8
+  batch_size: 3
   init_temperature: 0.01
-  num_states: 2
+  num_states: 4
 quantifier:
   name: every
 seed: 42
