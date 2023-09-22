@@ -39,7 +39,7 @@ def main(config: DictConfig):
     # breakpoint()
 
     # Load labeled data if it exists
-    if not os.path.exists(quantifier_data_fn) or quant_name not in pd.read_csv(quantifier_data_fn).columns and not overwrite:
+    if os.path.exists(quantifier_data_fn) and quant_name in pd.read_csv(quantifier_data_fn).columns and not overwrite:
         quantifier_data = pd.read_csv(quantifier_data_fn) # reading twice sigh
     else:
         # Otherwise label the data, then write to disk

@@ -22,15 +22,11 @@ def get_quantifier_labeled_data(data: pd.DataFrame, quant_name: str) -> pd.DataF
     # ensure data is in string format
     data["string"] = data["string"].astype(str)
 
-    labels = []
-    for _, row in data.iterrows():
-        # breakpoint()
-        x = string_to_int_tuple(row["string"])
-        logp = qpfa.logp_string(x)
-
-        label = True if logp == 0. else False
-        # print(x, logp, label)
-        labels.append(label) # eventually a listcomp
+    labels = [
+        True 
+        if qpfa.forward_algorithm(string_to_int_tuple(row["string"])) == 0. else False 
+        for _, row in data.iterrows()
+    ]
 
     data[quant_name] = labels
     return data

@@ -7,7 +7,7 @@ import torch
 import pandas as pd
 
 from qal import util
-from qal import training
+from qal.training import Trainer, EarlyStopper
 from qal.quantifier import BINARY_ALPHABET
 from qal.pfa import PFAModel
 from qal.data_gen import QuantifierStringDataset, custom_collate_fn
@@ -25,9 +25,9 @@ def main(config: DictConfig):
 
     quantifier_data_fn = util.get_quantifier_data_fn(config)
     quantifier_name = config.quantifier.name
+    losses_fn = config.filepaths.losses_fn
 
     epochs = int(config.learning.epochs)
-    num_states = config.learning.num_states
     init_temperature = config.learning.init_temperature
     batch_size = config.learning.batch_size
     split = config.learning.data.train_test_split
@@ -45,62 +45,74 @@ def main(config: DictConfig):
     test_size = len(dataset) - train_size
     training_data, test_data = random_split(dataset, [train_size, test_size])
 
+    dataloader_kwargs = {
+        "batch_size": batch_size, 
+        "collate_fn": custom_collate_fn,
+        "shuffle": True,
+    }
+
     train_dataloader = DataLoader(
         training_data, 
-        batch_size=batch_size, 
-        collate_fn=custom_collate_fn, 
-        shuffle=True,
+        **dataloader_kwargs,
         )
-    size = len(train_dataloader.dataset)
+    test_dataloader = DataLoader(
+        test_data,
+        **dataloader_kwargs,
+    )
 
     # Quantifier PFA learning model
     model = PFAModel(
-        num_states=num_states,
+        num_states=config.learning.num_states,
         alphabet=BINARY_ALPHABET,
         init_temperature=init_temperature,
     )
-
-    # Loss function 
-    # (more generally, we can try only using positive examples, and minimizing the NLL)
-    criterion = torch.nn.BCELoss()
-
-    # Optimizer
-    optimizer = training.get_optimizer(config.learning.optimizer)
-    opt = optimizer(params=model.parameters())
+    
+    trainer = Trainer(model, config)
+    early_stopper = EarlyStopper(patience=config.learning.patience)
 
     # Main training loop
-    running_loss = 0.
+    curves = {
+        "train_losses": [],
+        "train_accuracies": [],
+        "test_losses": [],
+        "test_accuracies": [],
+    }
+
     for epoch in range(epochs):
         if verbose and epoch % 100 == 0:
             print(f"Epoch {epoch+1}\n-------------------------------")
         
-        for batch_num, batch in enumerate(train_dataloader):
-            
-            # Unpack batch (padded_seqs, seq_lengths, targets)
-            seqs, seq_lengths, y = batch
+        # Train
+        train_loss, train_accuracy = trainer.train(train_dataloader)
 
-            # Get PFA prediction error
-            preds = model(seqs, seq_lengths)
-            try:
-                loss = criterion(preds, y)
-            except:
-                breakpoint()
+        # Track training progress
+        avg_train_loss = train_loss / len(train_dataloader)
+        if verbose and epoch % 100 == 0:
+            print(f"avg train loss: {avg_train_loss:>7f}")
+        curves["train_losses"].append(avg_train_loss)
+        curves["train_accuracies"].append(train_accuracy/len(train_dataloader))
 
-            # Record loss
-            running_loss += loss.item() * seqs.size(0)
+        # Test
+        test_loss, test_accuracy = trainer.test(test_dataloader)
+        avg_test_loss = test_loss / len(test_dataloader)
+        if verbose and epoch % 100 == 0:
+            print(f"avg test loss: {avg_test_loss:>7f}")
+        curves["test_losses"].append(avg_test_loss)
+        curves["test_accuracies"].append(test_accuracy/len(test_dataloader))
 
-            # breakpoint()
+        # Check if early stopping criteria met
+        if early_stopper.should_stop(avg_test_loss):
+            print(f"Early stopping after {epoch+1} epochs.")
+            break
 
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
+    # Save curves
+    df_curves = pd.DataFrame(curves)
+    df_curves["epoch"] = df_curves.index + 1
+    df_curves.to_csv(losses_fn, index=False)
 
-            loss = loss.item()
-            current = batch_num * len(seqs)
-            if verbose and epoch % 100 == 0:
-                print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-        
-        running_loss /= len(train_dataloader.sampler)
+    # Save model
+    torch.save(model.state_dict(), config.filepaths.model_fn)
+
 
 if __name__ == "__main__":
     main()

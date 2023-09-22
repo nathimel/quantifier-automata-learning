@@ -75,7 +75,7 @@ class PFAModel(torch.nn.Module):
         self.init = init
 
     def forward_algorithm(self, sequence: torch.Tensor) -> torch.Tensor:
-        """Compute the probability of a sequence under the PFA using the Forward algorithm (Vidal et al., 2005a, Section 3).
+        """Compute the (log) probability of a sequence under the PFA using the Forward algorithm (Vidal et al., 2005a, Section 3).
         """
 
         # breakpoint()
@@ -130,7 +130,8 @@ class PFAModel(torch.nn.Module):
         ]
 
         # Stack the list of tensors along a new dimension (default is dim=0)
-        out = torch.exp(torch.stack(output_list))
+        # out = torch.exp(torch.stack(output_list))
+        out = torch.stack(output_list)
 
         return out
 
