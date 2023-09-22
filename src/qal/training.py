@@ -2,6 +2,7 @@
 
 import torch
 from torch.utils.data import DataLoader
+from qal.pfa import PFAModel
 
 def get_optimizer(name: str) -> torch.optim.Optimizer:
     return {
@@ -12,7 +13,7 @@ def get_optimizer(name: str) -> torch.optim.Optimizer:
 
 class Trainer:
 
-    def __init__(self, model, config) -> None:
+    def __init__(self, model: PFAModel, config) -> None:
         self.model = model
         # Loss function 
         # (more generally, we can try only using positive examples, and minimizing the NLL)
@@ -21,15 +22,20 @@ class Trainer:
         # Optimizer
         self.optimizer = get_optimizer(config.learning.optimizer)(params=model.parameters(), lr=config.learning.learning_rate)
 
+        # threshold for predicting True/False in our binary classification
+        self.threshold = config.learning.threshold
+
     def train(self, dataloader: DataLoader) -> tuple[torch.Tensor]:
         train_loss = 0
+        total_correct = 0
+        total_samples = 0
         self.model.train()
         for _, batch in enumerate(dataloader):
-            # Unpack batch (padded_seqs, seq_lengths, targets)
-            seqs, seq_lengths, y = batch
+            # Unpack batch padded to max_length
+            seqs, seq_lengths, targets = batch
             # Get PFA prediction error
-            preds = self.model(seqs, seq_lengths)
-            loss = self.criterion(preds, y)
+            outputs = self.model(seqs, seq_lengths)
+            loss = self.criterion(outputs, targets)
             # Record loss
             train_loss += loss.item()
             # Update params
@@ -37,20 +43,32 @@ class Trainer:
             loss.backward()
             self.optimizer.step()
 
-        train_accuracy = 0. # TODO: implement
+            # Calculate training accuracy
+            predicted_labels = (outputs.exp() == self.threshold).float()
+            correct = (predicted_labels == targets).sum().item()
+            total_correct += correct
+            total_samples += len(targets)
+        train_accuracy = total_correct / total_samples
 
         return train_loss, train_accuracy
     
     def test(self, dataloader: DataLoader) -> tuple[torch.Tensor]:
         test_loss = 0
+        total_correct = 0
+        total_samples = 0
         with torch.no_grad():
             for _, batch in enumerate(dataloader):
-                seqs, seq_lengths, y = batch
-                preds = self.model(seqs, seq_lengths)
-                loss = self.criterion(preds, y)
+                seqs, seq_lengths, targets = batch
+                outputs = self.model(seqs, seq_lengths)
+                loss = self.criterion(outputs, targets)
                 test_loss += loss.item()
 
-        test_accuracy = 0.
+                # Calculate training accuracy
+                predicted_labels = (outputs.exp() == self.threshold).float()
+                correct = (predicted_labels == targets).sum().item()
+                total_correct += correct
+                total_samples += len(targets)
+        test_accuracy = total_correct / total_samples
         
         return test_loss, test_accuracy
 

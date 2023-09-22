@@ -16,8 +16,6 @@ from torch.utils.data import DataLoader, random_split
 
 from omegaconf import DictConfig
 
-import sys
-
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config")
 def main(config: DictConfig):
@@ -59,6 +57,9 @@ def main(config: DictConfig):
         test_data,
         **dataloader_kwargs,
     )
+    if verbose:
+        print(f"Training data size = {len(training_data)}")
+        print(f"Test data size = {len(test_data)}")
 
     # Quantifier PFA learning model
     model = PFAModel(
@@ -80,7 +81,7 @@ def main(config: DictConfig):
 
     for epoch in range(epochs):
         if verbose and epoch % 100 == 0:
-            print(f"Epoch {epoch+1}\n-------------------------------")
+            print(f"Epoch {epoch+1}/{epochs}\n-------------------------------")
         
         # Train
         train_loss, train_accuracy = trainer.train(train_dataloader)
@@ -89,16 +90,18 @@ def main(config: DictConfig):
         avg_train_loss = train_loss / len(train_dataloader)
         if verbose and epoch % 100 == 0:
             print(f"avg train loss: {avg_train_loss:>7f}")
+            print(f"avg train accuracy: {train_accuracy:>7f}")
         curves["train_losses"].append(avg_train_loss)
-        curves["train_accuracies"].append(train_accuracy/len(train_dataloader))
+        curves["train_accuracies"].append(train_accuracy)
 
         # Test
         test_loss, test_accuracy = trainer.test(test_dataloader)
         avg_test_loss = test_loss / len(test_dataloader)
         if verbose and epoch % 100 == 0:
             print(f"avg test loss: {avg_test_loss:>7f}")
+            print(f"avg test accuracy: {test_accuracy:>7f}")
         curves["test_losses"].append(avg_test_loss)
-        curves["test_accuracies"].append(test_accuracy/len(test_dataloader))
+        curves["test_accuracies"].append(test_accuracy)
 
         # Check if early stopping criteria met
         if early_stopper.should_stop(avg_test_loss):

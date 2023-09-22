@@ -27,6 +27,14 @@ filepaths:
   quantifier_data_dir: data/quantifier_data
 
   ############################################################################
+  # Outputs
+  ############################################################################
+
+  losses_fn: losses.csv
+
+  model_fn: model.pt
+
+  ############################################################################
   # Hydra automatic folder naming
   ############################################################################
 
@@ -34,7 +42,7 @@ filepaths:
   curve_subdir: seed=${seed}
 
   # for plots etc. that summarize experiment sweeps
-  experiment_subdir: 
+  experiment_subdir: quantifier=${quantifier.name}/num_states=${learning.num_states}/epochs=${learning.epochs}/batch_size=${learning.batch_size}/lr=${learning.learning_rate}
 
   # where the current working directory will be when hydra is running
   leaf_subdir: ${filepaths.experiment_subdir}
@@ -57,6 +65,11 @@ hydra:
       override_dirname:
         exclude_keys:
           - filepaths.leaf_subdir
+          - quantifier.name
+          - learning.num_states
+          - learning.epochs
+          - learning.batch_size
+          - learning.learning_rate
           - seed
 
   sweep:

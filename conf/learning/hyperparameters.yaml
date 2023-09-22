@@ -1,8 +1,11 @@
 epochs: 1e4
 optimizer: Adam
-learning_rate: 1e-5
+learning_rate: 1e-3
 batch_size: 3
+patience: 100 # how many consecutive epochs with no change
 
 init_temperature: 1e-2 # initialization temp param for logits
 
 num_states: 2 # in general, depends on the quantifer, so should be overridden
+
+threshold: 0.5 # the threshold for predicting True/False for binary classification accuracy

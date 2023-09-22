@@ -110,7 +110,7 @@ class PFAModel(torch.nn.Module):
         return total_log_alpha
 
 
-    def forward(self, x: torch.Tensor, lengths: torch.Tensor):
+    def forward(self, x: torch.Tensor, lengths: torch.Tensor) -> torch.Tensor:
         """The forward pass through the computation graph for the PFA.
 
         # NOTE: for now we're not vectorizing/parallelizing for simplicity, but that is desirable.

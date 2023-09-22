@@ -39,14 +39,19 @@ def main(config: DictConfig):
     # breakpoint()
 
     # Load labeled data if it exists
-    if os.path.exists(quantifier_data_fn) and quant_name in pd.read_csv(quantifier_data_fn).columns and not overwrite:
-        quantifier_data = pd.read_csv(quantifier_data_fn) # reading twice sigh
+    if os.path.exists(quantifier_data_fn):
+        quantifier_data = pd.read_csv(quantifier_data_fn)        
+        if not quant_name in pd.read_csv(quantifier_data_fn).columns:
+            quantifier_data = get_quantifier_labeled_data(quantifier_data, quant_name)
+
     else:
         # Otherwise label the data, then write to disk
         strings_df = pd.DataFrame(strings, columns=["string"])
         quantifier_data = get_quantifier_labeled_data(strings_df, quant_name)
+
+    if not overwrite:
         quantifier_data.to_csv(quantifier_data_fn, index=False)
-        print(f"Wrote {len(quantifier_data)} labeled strings to {quantifier_data_fn}.")
+        print(f"Wrote {len(quantifier_data)} labeled strings to {quantifier_data_fn}.")        
 
 
 if __name__ == "__main__":

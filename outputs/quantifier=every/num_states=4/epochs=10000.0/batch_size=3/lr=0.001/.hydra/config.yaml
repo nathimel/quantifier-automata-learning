@@ -6,10 +6,12 @@ learning:
     overwrite: false
   epochs: 10000.0
   optimizer: Adam
-  learning_rate: 1.0e-05
+  learning_rate: 0.001
   batch_size: 3
+  patience: 100
   init_temperature: 0.01
   num_states: 4
+  threshold: 0.5
 quantifier:
   name: every
 seed: 42
@@ -17,8 +19,10 @@ verbose: true
 filepaths:
   bitstrings_dir: data/bitstrings
   quantifier_data_dir: data/quantifier_data
+  losses_fn: losses.csv
+  model_fn: model.pt
   curve_subdir: seed=${seed}
-  experiment_subdir: null
+  experiment_subdir: quantifier=${quantifier.name}/num_states=${learning.num_states}/epochs=${learning.epochs}/batch_size=${learning.batch_size}/lr=${learning.learning_rate}
   leaf_subdir: ${filepaths.experiment_subdir}
   hydra_run_root: outputs
   hydra_sweep_root: multirun

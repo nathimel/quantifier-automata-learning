@@ -1,5 +1,5 @@
 data:
   max_bitstring_length: 10
-  train_test_split: 0.7 # 70/30 split
+  train_test_split: 0.7 # e.g. 70/30 split
   balanced: True # whether to downsample majority labels to achieve pos/neg labels
   overwrite: False # whether to overwrite existing data files

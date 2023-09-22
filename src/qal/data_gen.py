@@ -54,7 +54,7 @@ class QuantifierStringDataset(Dataset):
         """
         if balanced:
             positive_examples = string_df[string_df[quantifier_name] == True]
-            negative_examples = string_df[string_df[quantifier_name] == False]            
+            negative_examples = string_df[string_df[quantifier_name] == False]
             min_class_size = min(len(positive_examples), len(negative_examples))
 
             # Undersample the majority class to match size of majority class
