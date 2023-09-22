@@ -1,0 +1,4 @@
+- quantifier=at_least_four
+- learning.num_states=7
+- learning.batch_size=8
+- learning.epochs=1000

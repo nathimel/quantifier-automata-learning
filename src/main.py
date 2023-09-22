@@ -61,14 +61,19 @@ def main(config: DictConfig):
         print(f"Training data size = {len(training_data)}")
         print(f"Test data size = {len(test_data)}")
 
+    # Set device
+    # device = torch.device("mps") # for some reason slower
+    device = torch.device("cpu")
+
     # Quantifier PFA learning model
     model = PFAModel(
         num_states=config.learning.num_states,
         alphabet=BINARY_ALPHABET,
         init_temperature=init_temperature,
     )
+    model.to(device)
     
-    trainer = Trainer(model, config)
+    trainer = Trainer(model, config, device)
     early_stopper = EarlyStopper(patience=config.learning.patience)
 
     # Main training loop
@@ -112,9 +117,11 @@ def main(config: DictConfig):
     df_curves = pd.DataFrame(curves)
     df_curves["epoch"] = df_curves.index + 1
     df_curves.to_csv(losses_fn, index=False)
+    print(f"Wrote curves to {losses_fn}.")
 
     # Save model
     torch.save(model.state_dict(), config.filepaths.model_fn)
+    print(f"Wrote model to {config.filepaths.model_fn}")
 
 
 if __name__ == "__main__":

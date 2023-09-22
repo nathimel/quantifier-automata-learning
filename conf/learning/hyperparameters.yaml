@@ -8,4 +8,4 @@ init_temperature: 1e-2 # initialization temp param for logits
 
 num_states: 2 # in general, depends on the quantifer, so should be overridden
 
-threshold: 0.5 # the threshold for predicting True/False for binary classification accuracy
+threshold: 0.5 # greater than equal to this threshold for predicting True in  binary classification accuracy

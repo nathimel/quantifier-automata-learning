@@ -84,7 +84,7 @@ class PFAModel(torch.nn.Module):
         """
 
         num_transitions = len(sequence) + 1
-        log_alpha = torch.log(torch.zeros(num_transitions, self.num_states, requires_grad=True))
+        log_alpha = torch.log(torch.zeros(num_transitions, self.num_states, requires_grad=True, device=next(self.parameters()).device))
 
         # Initialize the forward probabilities for the first position
         log_alpha[0] = torch.log(self.init)
@@ -107,8 +107,11 @@ class PFAModel(torch.nn.Module):
                     log_alpha[i-1] + transition_probs, -1,
                 )
 
-        # Compute sum_q prob(|x|, q) * F(q)
-        total_log_alpha = torch.logsumexp(log_alpha[-1] + self.f_logits, -1)
+        # Compute total prob the automaton ends in final state
+        total_log_alpha = torch.logsumexp(
+            # prob(|x|, q) * F(q)
+            log_alpha[-1] + torch.nn.functional.logsigmoid(self.f_logits), -1
+        )
         return total_log_alpha
 
 
@@ -121,13 +124,21 @@ class PFAModel(torch.nn.Module):
             sequence_lengths: Tensor of Ints of shape `[batch_size,]` containing the original sequence lengths of each example in batch, before max padding.
 
         Returns:
-            out: Tensor of output logits of shape `[batch_size,]`.
+            out: Tensor of output probabilities of shape `[batch_size,]`.
         """
         # Create a list of model outputs
-        return torch.stack([
+        log_probs = torch.stack([
             self.forward_algorithm(tuple(seq[:lengths[idx]].tolist()))
             for idx, seq in enumerate(x)
         ])
+        # NOTE: I've observed that all values of probs are always basically within 0,1, but slightly numerically unstable. So we lose little by clamping.
+        probs = log_probs.exp()
+        out = torch.clamp(probs, 0, 1)
+        return out
+    
+    def prob_sequence(self, seq: tuple[int]) -> float:
+        """Probability of a binary sequence; helper function for testing since we mostly use forward for learning."""
+        return self.forward_algorithm(seq).exp()
 
     
     def symbol_to_index(self, symbol: int):
