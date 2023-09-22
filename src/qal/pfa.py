@@ -63,11 +63,16 @@ class PFAModel(torch.nn.Module):
         self.alphabet = tuple(sorted(set(alphabet)))        
         self.num_symbols = len(self.alphabet)
 
-        # Transition params
-        self.transition = TransitionModel(self.num_states, self.num_symbols, init_temperature)
+        # Transition params:
+        # The probability of transitioning to a state, given the current state and the current input string
+        self.T_logits = torch.nn.Parameter(
+            rand_init(
+                [self.num_states, self.num_symbols, self.num_states], init_temperature)
+            )
 
-        # Final state distribution params
-        self.final = FinalModel(self.num_states, init_temperature)
+        # Final states params:
+        # For each state, the probability that it is in the set of final states
+        self.f_logits = torch.nn.Parameter(rand_init([self.num_states], init_temperature))
 
         # Assume first state is always initial
         init = torch.zeros(num_states)
@@ -78,8 +83,6 @@ class PFAModel(torch.nn.Module):
         """Compute the (log) probability of a sequence under the PFA using the Forward algorithm (Vidal et al., 2005a, Section 3).
         """
 
-        # breakpoint()
-
         num_transitions = len(sequence) + 1
         log_alpha = torch.log(torch.zeros(num_transitions, self.num_states, requires_grad=True))
 
@@ -89,31 +92,28 @@ class PFAModel(torch.nn.Module):
         # Create a tensor for sequence symbols
         symbol_indices = torch.tensor([self.symbol_to_index(symbol) for symbol in sequence], dtype=torch.long)
 
-        # # Iterate over sequence
+        # # Don't know why the following won't work.
         # for i in range(1, num_transitions):
         #     transition_probs = log_alpha[i-1] + self.transition(symbol_indices[i-1])
         #     log_alpha[i] = torch.logsumexp(transition_probs, -1)
 
-        # breakpoint()
-
         # Iterate over sequence 
         for i in range(1, num_transitions):
             for state_idx in range(self.num_states):
+                # p(q', a, q)
+                transition_probs = torch.nn.functional.log_softmax(self.T_logits, -1)[:, symbol_indices[i-1], state_idx]
+
                 log_alpha[i, state_idx] = torch.logsumexp(
-                    log_alpha[i-1] + self.transition(symbol_indices[i-1], state_idx),
-                    -1,
+                    log_alpha[i-1] + transition_probs, -1,
                 )
 
-        # Compute the total probability by summing over the final state probabilities, sum_q prob(|x|, q) * F(q)
-        # breakpoint()
-        total_log_alpha = torch.logsumexp(log_alpha[-1] + self.final(), -1) # dummy dim
+        # Compute sum_q prob(|x|, q) * F(q)
+        total_log_alpha = torch.logsumexp(log_alpha[-1] + self.f_logits, -1)
         return total_log_alpha
 
 
     def forward(self, x: torch.Tensor, lengths: torch.Tensor) -> torch.Tensor:
         """The forward pass through the computation graph for the PFA.
-
-        # NOTE: for now we're not vectorizing/parallelizing for simplicity, but that is desirable.
 
         Args:
             x: Tensor of Ints of shape `[batch_size, sequence_length]` containing the input sequences
@@ -124,48 +124,11 @@ class PFAModel(torch.nn.Module):
             out: Tensor of output logits of shape `[batch_size,]`.
         """
         # Create a list of model outputs
-        output_list = [
+        return torch.stack([
             self.forward_algorithm(tuple(seq[:lengths[idx]].tolist()))
             for idx, seq in enumerate(x)
-        ]
-
-        # Stack the list of tensors along a new dimension (default is dim=0)
-        # out = torch.exp(torch.stack(output_list))
-        out = torch.stack(output_list)
-
-        return out
+        ])
 
     
     def symbol_to_index(self, symbol: int):
         return self.alphabet.index(symbol)    
-
-
-# (sub)Modules for the PFA parameters.
-# Note the log_softmax in each forward pass, as we are computing log probabilities.
-class TransitionModel(torch.nn.Module):
-
-    def __init__(self, num_states, num_symbols, init_temperature) -> None:
-        super(TransitionModel, self).__init__()
-        self.T_logits = torch.nn.Parameter(rand_init([num_states, num_symbols, num_states], init_temperature))
-
-    # def forward(self, symbol_idx) -> torch.Tensor:
-    def forward(self, symbol_idx, state_idx):    
-    # def forward(self, from_state_idx, symbol_idx, state_idx):
-        """Forward pass for p(q', a, q), the probability of transitioning to q from q' and accepting symbol a."""
-        log_T = torch.nn.functional.log_softmax(self.T_logits, dim=-1)
-        # breakpoint()
-        return log_T[:, symbol_idx, state_idx]
-        # return log_T[:, symbol_idx, :]
-
-class FinalModel(torch.nn.Module):
-
-    def __init__(self, num_states, init_temperature) -> None:
-        super(FinalModel, self).__init__()
-        self.f_logits = torch.nn.Parameter(rand_init([num_states], init_temperature))
-
-    def forward(self) -> torch.Tensor:
-        """Forward pass for the final state distribution logits.
-        """
-        log_f = torch.nn.functional.log_softmax(self.f_logits, dim=-1) # dummy dim
-        return log_f
-

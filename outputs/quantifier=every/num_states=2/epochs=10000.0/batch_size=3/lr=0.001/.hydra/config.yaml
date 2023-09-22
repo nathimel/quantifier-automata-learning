@@ -11,6 +11,7 @@ learning:
   patience: 100
   init_temperature: 0.01
   num_states: 2
+  threshold: 0.5
 quantifier:
   name: every
 seed: 42
