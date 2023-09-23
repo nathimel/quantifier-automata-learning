@@ -51,3 +51,8 @@ class TestQuantifierPFA:
         qpfa = quantifier_map["at_least_six_or_at_most_two"]
         strings = generate_up_to_length(10)
         check_probs(qpfa, strings, lambda x: sum(x) >= 6 or sum(x) <= 2)
+
+    def test_at_most_three(self):
+        qpfa = quantifier_map["at_most_three"]
+        strings = generate_up_to_length(10)
+        check_probs(qpfa, strings, lambda x: sum(x) <= 3)

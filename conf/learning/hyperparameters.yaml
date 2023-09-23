@@ -4,7 +4,7 @@ learning_rate: 1e-3
 batch_size: 3
 patience: 100 # how many consecutive epochs with no change
 
-init_temperature: 1e-2 # initialization temp param for logits
+init_temperature: 1e5 # initialization temp param for logits, larger -> more uniform
 
 num_states: 2 # in general, depends on the quantifer, so should be overridden
 

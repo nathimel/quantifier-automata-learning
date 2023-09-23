@@ -101,7 +101,7 @@ class Trainer:
 
 
 class EarlyStopper:
-    def __init__(self, patience: int = 100):
+    def __init__(self, patience: int = 100, delta = 1e-5):
         """Initialize an EarlyStopper.
 
         Args:
@@ -110,6 +110,7 @@ class EarlyStopper:
         self.patience = patience
         self.counter = 0
         self.best_val_loss = torch.inf
+        self.delta = delta
 
     def should_stop(self, val_loss: torch.Tensor) -> bool:
         """Return True if `val_loss` has not improved after `patience` consecutive epochs.
@@ -117,7 +118,7 @@ class EarlyStopper:
         Args:
             val_loss: the average validation loss of the model over one epoch.
         """
-        if val_loss < self.best_val_loss:
+        if self.best_val_loss - val_loss > self.delta:
             self.best_val_loss = val_loss
             self.counter = 0
         else:

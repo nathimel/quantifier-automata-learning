@@ -113,15 +113,18 @@ def main(config: DictConfig):
             print(f"Early stopping after {epoch+1} epochs.")
             break
 
+        if verbose and epoch % 100 == 0:        
+            print("-------------------------------")
+
     # Save curves
     df_curves = pd.DataFrame(curves)
     df_curves["epoch"] = df_curves.index + 1
     df_curves.to_csv(losses_fn, index=False)
-    print(f"Wrote curves to {losses_fn}.")
+    print(f"Wrote curves to {os.path.join(os.getcwd(), losses_fn)}.")
 
     # Save model
     torch.save(model.state_dict(), config.filepaths.model_fn)
-    print(f"Wrote model to {config.filepaths.model_fn}")
+    print(f"Wrote model to {os.path.join(os.getcwd(), config.filepaths.model_fn)}")
 
 
 if __name__ == "__main__":

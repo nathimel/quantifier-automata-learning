@@ -24,7 +24,11 @@ def stochastic_to_real(input_tensor):
 
     return output_tensor
 
-# Dummy initialize
+
+##############################################################################
+# Test quantifiers
+##############################################################################
+
 every = PFAModel(
     num_states = 2,
     alphabet = BINARY_ALPHABET,
@@ -40,8 +44,6 @@ T = torch.tensor([
 ])
 f = torch.tensor([1., 0.,]) # one-hot on last state
 every = set_pfa_params(every, T, f)
-# every.T_logits = torch.nn.Parameter(torch.log(T))
-# every.f_logits = torch.nn.Parameter(torch.log(f))
 
 some = PFAModel(
     num_states = 2,
@@ -54,8 +56,6 @@ T = torch.tensor([
          [0., 1.,]]
 ])
 f = torch.tensor([0., 1.,])
-# some.T_logits = torch.nn.Parameter(torch.log(T))
-# some.f_logits = torch.nn.Parameter(torch.log(f))
 some = set_pfa_params(some, T, f)
 
 
@@ -74,10 +74,11 @@ T = torch.tensor([
          [0., 0., 0., 1.]],
 ])
 f = torch.tensor([0., 0., 0., 1.])
-# at_least_three.T_logits = torch.nn.Parameter(torch.log(T))
-# at_least_three.f_logits = torch.nn.Parameter(torch.log(f))
 at_least_three = set_pfa_params(at_least_three, T, f)
 
+##############################################################################
+# Experiment quantifiers
+##############################################################################
 
 at_least_four = PFAModel(
     num_states = 5,
@@ -96,8 +97,6 @@ T = torch.tensor([
          [0., 0., 0., 0., 1.]]
 ])
 f = torch.tensor([0., 0., 0., 0., 1.,])
-# at_least_four.T_logits = torch.nn.Parameter(torch.log(T))
-# at_least_four.f_logits = torch.nn.Parameter(torch.log(f))
 at_least_four = set_pfa_params(at_least_four, T, f)
 
 at_least_six_or_at_most_two = PFAModel(7, BINARY_ALPHABET)
@@ -118,9 +117,30 @@ T = torch.tensor([
          [0., 0., 0., 0., 0., 0., 1.]]        
 ])
 f = torch.tensor([1., 1., 1., 0., 0., 0., 1.])
-# at_least_six_or_at_most_two.T_logits = torch.nn.Parameter(torch.log(T))
-# at_least_six_or_at_most_two.f_logits = torch.nn.Parameter(torch.log(f))
 at_least_six_or_at_most_two = set_pfa_params(at_least_six_or_at_most_two, T, f)
+
+
+at_most_three = PFAModel(5, BINARY_ALPHABET)
+# same as at_least_four
+T = torch.tensor([
+        [[1., 0., 0., 0., 0.], 
+         [0., 1., 0., 0., 0.]],
+        [[0., 1., 0., 0., 0.], 
+         [0., 0., 1., 0., 0.]],
+        [[0., 0., 1., 0., 0.], 
+         [0., 0., 0., 1., 0.]],
+        [[0., 0., 0., 1., 0.], 
+         [0., 0., 0., 0., 1.]],
+        [[0., 0., 0., 0., 1.], 
+         [0., 0., 0., 0., 1.]]
+])
+f = torch.tensor([1., 1., 1., 1., 0.])
+at_most_three = set_pfa_params(at_most_three, T, f)
+
+
+##############################################################################
+# End quantifiers
+##############################################################################
 
 quantifier_map = {
     "every": every,
@@ -128,4 +148,5 @@ quantifier_map = {
     "at_least_three": at_least_three,
     "at_least_four": at_least_four,
     "at_least_six_or_at_most_two": at_least_six_or_at_most_two,
+    "at_most_three": at_most_three,
 }

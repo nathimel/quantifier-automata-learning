@@ -15,9 +15,9 @@ class PFAModel(torch.nn.Module):
         - Q is a finite set of states
         - S is the alphabet
         - d subset Q x S x Q is a set of transitions
-        - I: Q -> [0,1] is the initial state probability distribution
-        - T: d -> [0,1] is the state-transition probability distribution
-        - F: Q -> [0,1] is the final state probability distribution
+        - I: Q -> [0,1], the initial state probabilities
+        - T: d -> [0,1], the state-transition probabilities
+        - F: Q -> [0,1], the final state probabilities
 
     Given a PFA A, the process of generating (accepting) a string proceeds as follows:
 
@@ -62,6 +62,8 @@ class PFAModel(torch.nn.Module):
         self.num_states = num_states
         self.alphabet = tuple(sorted(set(alphabet)))        
         self.num_symbols = len(self.alphabet)
+
+        # TODO: repeat experiments with initial probs parameterized.
 
         # Transition params:
         # The probability of transitioning to a state, given the current state and the current input string

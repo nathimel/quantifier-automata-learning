@@ -1,0 +1,4 @@
+- learning.patience=1000
+- learning.learning_rate=1e-4
+- quantifier=at_least_six_or_at_most_two
+- learning.num_states=7

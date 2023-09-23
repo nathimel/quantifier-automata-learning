@@ -113,10 +113,13 @@ hydra:
     - hydra.mode=RUN
     task:
     - learning.patience=1000
+    - learning.learning_rate=1e-4
+    - quantifier=at_least_four
+    - learning.num_states=5
   job:
     name: main
     chdir: true
-    override_dirname: learning.patience=1000
+    override_dirname: learning.patience=1000,quantifier=at_least_four
     id: ???
     num: ???
     config_name: config
@@ -148,8 +151,9 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /Users/nathanielimel/uci/projects/qal/quantifer-automata-learning/outputs/quantifier=every/num_states=2/epochs=10000.0/batch_size=3/lr=0.001
+    output_dir: /Users/nathanielimel/uci/projects/qal/quantifer-automata-learning/outputs/quantifier=at_least_four/num_states=5/epochs=10000.0/batch_size=3/lr=0.0001
     choices:
+      quantifier: at_least_four
       hydra/env: default
       hydra/callbacks: null
       hydra/job_logging: default

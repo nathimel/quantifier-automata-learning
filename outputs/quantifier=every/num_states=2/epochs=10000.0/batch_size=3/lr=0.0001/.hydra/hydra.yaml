@@ -113,6 +113,7 @@ hydra:
     - hydra.mode=RUN
     task:
     - learning.patience=1000
+    - learning.learning_rate=1e-4
   job:
     name: main
     chdir: true
@@ -148,7 +149,7 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /Users/nathanielimel/uci/projects/qal/quantifer-automata-learning/outputs/quantifier=every/num_states=2/epochs=10000.0/batch_size=3/lr=0.001
+    output_dir: /Users/nathanielimel/uci/projects/qal/quantifer-automata-learning/outputs/quantifier=every/num_states=2/epochs=10000.0/batch_size=3/lr=0.0001
     choices:
       hydra/env: default
       hydra/callbacks: null
