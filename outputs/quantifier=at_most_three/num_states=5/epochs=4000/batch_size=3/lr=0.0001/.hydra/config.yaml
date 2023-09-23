@@ -3,17 +3,17 @@ learning:
     max_bitstring_length: 10
     train_test_split: 0.7
     balanced: true
-    overwrite: false
-  epochs: 10000.0
+    overwrite: true
+  epochs: 4000
   optimizer: Adam
-  learning_rate: 0.001
+  learning_rate: 0.0001
   batch_size: 3
-  patience: 100
+  patience: 1000
   init_temperature: 100000.0
-  num_states: 2
+  num_states: 5
   threshold: 0.5
 quantifier:
-  name: every
+  name: at_most_three
 seed: 42
 verbose: true
 filepaths:

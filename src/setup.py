@@ -8,6 +8,9 @@ from omegaconf import DictConfig
 from qal import util
 from qal.data_gen import generate_up_to_length, get_quantifier_labeled_data
 
+def write_labeled_data(quantifier_data_fn: str, quantifier_data: pd.DataFrame):
+    quantifier_data.to_csv(quantifier_data_fn, index=False)
+    print(f"Wrote {len(quantifier_data)} labeled strings to {quantifier_data_fn}.")
 
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config")
@@ -33,27 +36,27 @@ def main(config: DictConfig):
 
     # Load the quantifier to label data for
     quant_name = config.quantifier.name
-    # quantifier_data_fn = os.path.join(os.path.join(cwd, config.filepaths.quantifier_data_dir), f"{max_length}.csv")
     quantifier_data_fn = util.get_quantifier_data_fn(config)
-
-    # breakpoint()
 
     # Load labeled data if it exists
     if os.path.exists(quantifier_data_fn):
-        quantifier_data = pd.read_csv(quantifier_data_fn)        
+        quantifier_data = pd.read_csv(quantifier_data_fn)
+        # If the data is not labeled with the quantifier yet
         if not quant_name in pd.read_csv(quantifier_data_fn).columns:
             quantifier_data = get_quantifier_labeled_data(quantifier_data, quant_name)
+            write_labeled_data(quantifier_data_fn, quantifier_data)
+        # If we need to overwrite for some reason
+        elif overwrite:
+            quantifier_data = get_quantifier_labeled_data(quantifier_data, quant_name)
+            write_labeled_data(quantifier_data_fn, quantifier_data)
         else:
             print(f"Labeled quantifier data already exists, skipping.")
 
     else:
-        # Otherwise label the data, then write to disk
+        # Otherwise create the data for the first time
         strings_df = pd.DataFrame(strings, columns=["string"])
         quantifier_data = get_quantifier_labeled_data(strings_df, quant_name)
-
-    if overwrite:
-        quantifier_data.to_csv(quantifier_data_fn, index=False)
-        print(f"Wrote {len(quantifier_data)} labeled strings to {quantifier_data_fn}.")        
+        write_labeled_data(quantifier_data_fn, quantifier_data)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ learning:
   num_states: 2
   threshold: 0.5
 quantifier:
-  name: every
+  name: at_least_four
 seed: 42
 verbose: true
 filepaths:

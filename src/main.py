@@ -48,7 +48,7 @@ def main(config: DictConfig):
         "collate_fn": custom_collate_fn,
         "shuffle": True,
     }
-
+    breakpoint()
     train_dataloader = DataLoader(
         training_data, 
         **dataloader_kwargs,

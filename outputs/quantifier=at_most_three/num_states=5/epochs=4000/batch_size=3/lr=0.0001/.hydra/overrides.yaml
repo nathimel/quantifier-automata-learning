@@ -1,0 +1,6 @@
+- learning.patience=1000
+- learning.learning_rate=1e-4
+- quantifier=at_most_three
+- learning.num_states=5
+- learning.epochs=4000
+- learning.data.overwrite=True

@@ -23,8 +23,8 @@ def get_quantifier_labeled_data(data: pd.DataFrame, quant_name: str) -> pd.DataF
     data["string"] = data["string"].astype(str)
 
     labels = [
-        True 
-        if qpfa.forward_algorithm(string_to_int_tuple(row["string"])) == 0. else False 
+        True if qpfa.prob_sequence(string_to_int_tuple(row["string"])) == 1.
+        else False
         for _, row in data.iterrows()
     ]
 

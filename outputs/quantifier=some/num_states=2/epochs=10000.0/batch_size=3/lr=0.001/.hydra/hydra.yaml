@@ -111,11 +111,12 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task: []
+    task:
+    - quantifier=some
   job:
     name: setup
     chdir: true
-    override_dirname: ''
+    override_dirname: quantifier=some
     id: ???
     num: ???
     config_name: config
@@ -147,8 +148,9 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /Users/nathanielimel/uci/projects/qal/quantifer-automata-learning/outputs/quantifier=every/num_states=2/epochs=10000.0/batch_size=3/lr=0.001
+    output_dir: /Users/nathanielimel/uci/projects/qal/quantifer-automata-learning/outputs/quantifier=some/num_states=2/epochs=10000.0/batch_size=3/lr=0.001
     choices:
+      quantifier: some
       hydra/env: default
       hydra/callbacks: null
       hydra/job_logging: default
