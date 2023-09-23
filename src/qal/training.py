@@ -50,10 +50,7 @@ class Trainer:
             # Get PFA prediction error
             outputs = self.model(seqs, seq_lengths)
             loss = self.criterion(outputs, targets)
-            # try:
-            #     loss = self.criterion(outputs, targets)
-            # except RuntimeError:
-            #     breakpoint()
+
             # Record loss
             train_loss += loss.item()
             # Update params
@@ -83,10 +80,6 @@ class Trainer:
 
                 outputs = self.model(seqs, seq_lengths)
                 loss = self.criterion(outputs, targets)
-                # try:
-                #     loss = self.criterion(outputs, targets)
-                # except RuntimeError:
-                #     breakpoint()
 
                 test_loss += loss.item()
 

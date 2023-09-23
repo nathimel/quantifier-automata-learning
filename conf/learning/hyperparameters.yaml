@@ -5,8 +5,8 @@ batch_size: 3
 
 # Stopping criterions
 patience: 100 # how many consecutive epochs with no change
-loss_threshold: 0.01
-accuracy_threshold: 0.99
+loss_threshold: 0.02
+accuracy_threshold: 0.996
 
 init_temperature: 1e5 # initialization temp param for logits, larger -> more uniform
 

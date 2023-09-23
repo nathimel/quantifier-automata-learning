@@ -1,0 +1,9 @@
+name: qal
+channels:
+  - conda-forge
+dependencies:
+  - pytorch
+  - hydra-core
+  - pandas
+  - pytest
+  - plotnine

@@ -117,7 +117,7 @@ def main(config: DictConfig):
             print(f"Early stopping after {epoch+1} epochs.")
             break
 
-        if verbose and epoch % 100 == 0:        
+        if verbose and epoch % 100 == 0:
             print("-------------------------------")
 
     # Save curves

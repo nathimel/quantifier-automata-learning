@@ -94,7 +94,7 @@ class PFAModel(torch.nn.Module):
         # Create a tensor for sequence symbols
         symbol_indices = torch.tensor([self.symbol_to_index(symbol) for symbol in sequence], dtype=torch.long)
 
-        # # Don't know why the following won't work.
+        # # Don't know why the following vectorization won't work.
         # for i in range(1, num_transitions):
         #     transition_probs = log_alpha[i-1] + self.transition(symbol_indices[i-1])
         #     log_alpha[i] = torch.logsumexp(transition_probs, -1)
