@@ -56,3 +56,8 @@ class TestQuantifierPFA:
         qpfa = quantifier_map["at_most_three"]
         strings = generate_up_to_length(10)
         check_probs(qpfa, strings, lambda x: sum(x) <= 3)
+
+    def test_first_three(self):
+        qpfa = quantifier_map["first_three"]
+        strings = generate_up_to_length(10)
+        check_probs(qpfa, strings, lambda x: sum(x[:3]) == 3)

@@ -48,7 +48,7 @@ def main(config: DictConfig):
         "collate_fn": custom_collate_fn,
         "shuffle": True,
     }
-    breakpoint()
+
     train_dataloader = DataLoader(
         training_data, 
         **dataloader_kwargs,
@@ -74,7 +74,11 @@ def main(config: DictConfig):
     model.to(device)
     
     trainer = Trainer(model, config, device)
-    early_stopper = EarlyStopper(patience=config.learning.patience)
+    early_stopper = EarlyStopper(
+        patience=config.learning.patience,
+        accuracy_threshold=config.learning.accuracy_threshold,
+        loss_threshold=config.learning.loss_threshold,
+    )
 
     # Main training loop
     curves = {
@@ -109,7 +113,7 @@ def main(config: DictConfig):
         curves["test_accuracies"].append(test_accuracy)
 
         # Check if early stopping criteria met
-        if early_stopper.should_stop(avg_test_loss):
+        if early_stopper.should_stop(avg_test_loss, test_accuracy):
             print(f"Early stopping after {epoch+1} epochs.")
             break
 

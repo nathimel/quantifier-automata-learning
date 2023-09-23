@@ -101,23 +101,38 @@ class Trainer:
 
 
 class EarlyStopper:
-    def __init__(self, patience: int = 100, delta = 1e-5):
+    def __init__(self, 
+            patience: int = 100, 
+            accuracy_threshold: float = 0.99, 
+            loss_threshold: float = 0.01, 
+            delta = 1e-5,
+            ):
         """Initialize an EarlyStopper.
 
         Args:
             patience: how many consecutive epochs with no improvement should trigger early stopping.
         """
+        self.accuracy_threshold = accuracy_threshold
+        self.loss_threshold = loss_threshold
+
         self.patience = patience
         self.counter = 0
         self.best_val_loss = torch.inf
         self.delta = delta
 
-    def should_stop(self, val_loss: torch.Tensor) -> bool:
+    def should_stop(self, val_loss: float, val_acc: float) -> bool:
         """Return True if `val_loss` has not improved after `patience` consecutive epochs.
 
         Args:
             val_loss: the average validation loss of the model over one epoch.
         """
+        if val_loss < self.loss_threshold:
+            print(f"Loss below {self.loss_threshold}.")
+            return True
+        if val_acc > self.accuracy_threshold:
+            print(f"Accuracy above {self.accuracy_threshold}.")
+            return True
+
         if self.best_val_loss - val_loss > self.delta:
             self.best_val_loss = val_loss
             self.counter = 0

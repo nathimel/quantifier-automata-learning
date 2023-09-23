@@ -2,7 +2,11 @@ epochs: 1e4
 optimizer: Adam
 learning_rate: 1e-3
 batch_size: 3
+
+# Stopping criterions
 patience: 100 # how many consecutive epochs with no change
+loss_threshold: 0.01
+accuracy_threshold: 0.99
 
 init_temperature: 1e5 # initialization temp param for logits, larger -> more uniform
 

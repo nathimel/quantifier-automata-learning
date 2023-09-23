@@ -138,6 +138,24 @@ f = torch.tensor([1., 1., 1., 1., 0.])
 at_most_three = set_pfa_params(at_most_three, T, f)
 
 
+# check with shane
+first_three = PFAModel(5, BINARY_ALPHABET)
+T = torch.tensor([
+        [[0., 0., 0., 0., 1.], 
+         [0., 1., 0., 0., 0.]],
+        [[0., 0., 0., 0., 1.], 
+         [0., 0., 1., 0., 0.]],
+        [[0., 0., 0., 0., 1.], 
+         [0., 0., 0., 1., 0.]],
+        [[0., 0., 0., 1., 0.], 
+         [0., 0., 0., 1., 0.]],
+        [[0., 0., 0., 0., 1.], 
+         [0., 0., 0., 0., 1.]],
+])
+f = torch.tensor([0., 0., 0., 1., 0.])
+first_three = set_pfa_params(first_three, T, f)
+
+
 ##############################################################################
 # End quantifiers
 ##############################################################################
@@ -149,4 +167,5 @@ quantifier_map = {
     "at_least_four": at_least_four,
     "at_least_six_or_at_most_two": at_least_six_or_at_most_two,
     "at_most_three": at_most_three,
+    "first_three": first_three,
 }
