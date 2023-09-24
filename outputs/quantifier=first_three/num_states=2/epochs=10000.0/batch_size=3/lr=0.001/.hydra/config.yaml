@@ -1,6 +1,6 @@
 learning:
   data:
-    max_bitstring_length: 10
+    max_bitstring_length: 20
     train_test_split: 0.7
     balanced: true
     overwrite: false
@@ -9,8 +9,8 @@ learning:
   learning_rate: 0.001
   batch_size: 3
   patience: 100
-  loss_threshold: 0.01
-  accuracy_threshold: 0.99
+  loss_threshold: 0.02
+  accuracy_threshold: 0.996
   init_temperature: 100000.0
   num_states: 2
   threshold: 0.5

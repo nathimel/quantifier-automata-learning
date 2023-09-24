@@ -1,0 +1,3 @@
+- quantifier=at_least_four
+- learning.num_states=10
+- verbose=False

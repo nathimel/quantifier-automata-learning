@@ -6,6 +6,7 @@ import pandas as pd
 
 from qal.quantifier import quantifier_map
 from typing import Generator
+from tqdm import tqdm
 
 from torch.utils.data import Dataset
 
@@ -21,11 +22,12 @@ def get_quantifier_labeled_data(data: pd.DataFrame, quant_name: str) -> pd.DataF
 
     # ensure data is in string format
     data["string"] = data["string"].astype(str)
+    strings = data["string"].tolist()
 
     labels = [
-        True if qpfa.prob_sequence(string_to_int_tuple(row["string"])) == 1.
+        True if qpfa.prob_sequence(string_to_int_tuple(string)) == 1.
         else False
-        for _, row in data.iterrows()
+        for string in tqdm(strings)
     ]
 
     data[quant_name] = labels

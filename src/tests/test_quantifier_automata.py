@@ -61,3 +61,8 @@ class TestQuantifierPFA:
         qpfa = quantifier_map["first_three"]
         strings = generate_up_to_length(10)
         check_probs(qpfa, strings, lambda x: sum(x[:3]) == 3)
+
+    def test_even(self):
+        qpfa = quantifier_map["even"]
+        strings = generate_up_to_length(10)
+        check_probs(qpfa, strings, lambda x: sum(x) % 2 == 0)

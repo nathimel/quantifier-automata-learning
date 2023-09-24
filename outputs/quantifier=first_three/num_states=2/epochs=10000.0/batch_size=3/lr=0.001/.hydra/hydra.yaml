@@ -112,11 +112,12 @@ hydra:
     hydra:
     - hydra.mode=RUN
     task:
+    - learning.data.max_bitstring_length=20
     - quantifier=first_three
   job:
     name: setup
     chdir: true
-    override_dirname: quantifier=first_three
+    override_dirname: learning.data.max_bitstring_length=20,quantifier=first_three
     id: ???
     num: ???
     config_name: config
