@@ -37,7 +37,7 @@ class PFAModel(torch.nn.Module):
     where \Pi is the set of all paths (transition sequences) leading to the acceptance of x. This probability, of parsing an i-substring of x and reaching state q, can be computed using the recursive Forward algorithm:
 
         prob(0, q) = I(q)
-        prob(i, q) = \sum_q prob(i-1, q') * P(q', x_i, q)
+        prob(i, q) = \sum_q prob(i-1, q') * T(q', x_i, q)
     """    
 
     def __init__(
@@ -102,7 +102,7 @@ class PFAModel(torch.nn.Module):
         # Iterate over sequence 
         for i in range(1, num_transitions):
             for state_idx in range(self.num_states):
-                # p(q', a, q)
+                # T(q', a, q)
                 transition_probs = torch.nn.functional.log_softmax(self.T_logits, -1)[:, symbol_indices[i-1], state_idx]
 
                 log_alpha[i, state_idx] = torch.logsumexp(

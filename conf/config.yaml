@@ -7,7 +7,7 @@ defaults:
     - hyperparameters
   - quantifier:
     - every
-  - override hydra/launcher: joblib # By default, process-based parallelism using all available CPU cores is used    
+  # - override hydra/launcher: joblib # By default, process-based parallelism using all available CPU cores is used    
   - _self_ # stuff below can override stuff above  
 
 seed: 42
@@ -30,8 +30,8 @@ filepaths:
   # Outputs
   ############################################################################
 
-  losses_fn: losses.csv
-
+  curves_fn: curves.csv
+  checkpoint_fn: checkpoint.pt
   model_fn: model.pt
 
   ############################################################################

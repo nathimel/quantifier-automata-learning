@@ -44,7 +44,7 @@ def generate_binary_strings(length: int) -> Generator:
 
 class QuantifierStringDataset(Dataset):
 
-    def __init__(self, quantifier_name: str, string_df: pd.DataFrame, balanced = True) -> None:
+    def __init__(self, quantifier_name: str, string_df: pd.DataFrame, balanced = True, max_size: int = None) -> None:
         """Construct a pytorch Dataset from a dataframe and column name.
 
         Args:
@@ -64,6 +64,15 @@ class QuantifierStringDataset(Dataset):
                 positive_examples.sample(min_class_size, replace=False), negative_examples.sample(min_class_size, replace=False)
                 ])
             string_df = balanced_dataset
+        
+        if max_size is not None:
+            if max_size > len(string_df):
+                raise Exception(f"max_size is larger than available dataset.")
+            size = int(max_size/2)
+            string_df = pd.concat([
+                positive_examples.sample(size, replace=False),
+                negative_examples.sample(size, replace=False)
+            ])
 
         # List of tuples of ints
         self.strings = [string_to_int_tuple(x) for x in string_df["string"].astype(str).tolist()]

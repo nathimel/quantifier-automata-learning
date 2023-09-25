@@ -1,5 +1,8 @@
 data:
-  max_bitstring_length: 10
+  max_size: 2698 # I counted the size of the smallests balanced dataset
+  max_bitstring_length: 20
   train_test_split: 0.7 # e.g. 70/30 split
   balanced: True # whether to downsample majority labels to achieve pos/neg labels
   overwrite: False # whether to overwrite existing data files
+
+print_frequency: 10

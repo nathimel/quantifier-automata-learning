@@ -121,14 +121,16 @@ hydra:
   output_subdir: .hydra
   overrides:
     hydra:
+    - hydra/launcher=joblib
     - hydra.mode=MULTIRUN
     task:
-    - learning.data.max_bitstring_length=20
-    - quantifier=at_least_six_or_at_most_two,at_least_four,at_most_three,at_least_three
+    - quantifier=at_least_six_or_at_most_two,at_least_four,at_most_three,at_least_three,first_three
+    - learning.epochs=4000
+    - verbose=False
   job:
-    name: setup
+    name: main
     chdir: true
-    override_dirname: learning.data.max_bitstring_length=20,quantifier=at_least_six_or_at_most_two,at_least_four,at_most_three,at_least_three
+    override_dirname: quantifier=at_least_six_or_at_most_two,at_least_four,at_most_three,at_least_three,first_three,verbose=False
     id: ???
     num: ???
     config_name: config
@@ -174,24 +176,27 @@ hydra:
   verbose: false
 learning:
   data:
+    max_size: 2698
     max_bitstring_length: 20
     train_test_split: 0.7
     balanced: true
     overwrite: false
-  epochs: 100.0
+  print_frequency: 10
+  epochs: 4000
   optimizer: Adam
-  learning_rate: 0.001
-  batch_size: 32
+  learning_rate: 0.0001
+  batch_size: 8
+  early_stopping: false
   patience: 100
   loss_threshold: 0.02
   accuracy_threshold: 0.996
   init_temperature: 100000.0
-  num_states: 2
+  num_states: 10
   threshold: 0.5
 quantifier:
   name: every
 seed: 42
-verbose: true
+verbose: false
 filepaths:
   bitstrings_dir: data/bitstrings
   quantifier_data_dir: data/quantifier_data

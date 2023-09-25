@@ -1,0 +1,3 @@
+- quantifier=at_most_three
+- learning.epochs=4000
+- verbose=False

@@ -23,21 +23,24 @@ def main(config: DictConfig):
 
     quantifier_data_fn = util.get_quantifier_data_fn(config)
     quantifier_name = config.quantifier.name
-    losses_fn = config.filepaths.losses_fn
+    curves_fn = config.filepaths.curves_fn
 
     epochs = int(config.learning.epochs)
     init_temperature = config.learning.init_temperature
     batch_size = config.learning.batch_size
     split = config.learning.data.train_test_split
     balanced = config.learning.data.balanced
+    early_stopping = config.learning.early_stopping
 
     verbose = config.verbose
+    print_freq = config.learning.print_frequency
 
     # Dataset
     dataset = QuantifierStringDataset(
         quantifier_name, 
         pd.read_csv(quantifier_data_fn),
         balanced=balanced,
+        max_size=config.learning.data.max_size,
         )
     train_size = int(split * len(dataset))
     test_size = len(dataset) - train_size
@@ -74,11 +77,12 @@ def main(config: DictConfig):
     model.to(device)
     
     trainer = Trainer(model, config, device)
-    early_stopper = EarlyStopper(
-        patience=config.learning.patience,
-        accuracy_threshold=config.learning.accuracy_threshold,
-        loss_threshold=config.learning.loss_threshold,
-    )
+    if early_stopping:
+        early_stopper = EarlyStopper(
+            patience=config.learning.patience,
+            accuracy_threshold=config.learning.accuracy_threshold,
+            loss_threshold=config.learning.loss_threshold,
+        )
 
     # Main training loop
     curves = {
@@ -89,15 +93,15 @@ def main(config: DictConfig):
     }
 
     for epoch in range(epochs):
-        if verbose and epoch % 100 == 0:
+        if verbose and epoch % print_freq == 0:
             print(f"Epoch {epoch+1}/{epochs}\n-------------------------------")
-        
+
         # Train
         train_loss, train_accuracy = trainer.train(train_dataloader)
 
         # Track training progress
         avg_train_loss = train_loss / len(train_dataloader)
-        if verbose and epoch % 100 == 0:
+        if verbose and (epoch + 1) % print_freq == 0:
             print(f"avg train loss: {avg_train_loss:>7f}")
             print(f"avg train accuracy: {train_accuracy:>7f}")
         curves["train_losses"].append(avg_train_loss)
@@ -105,28 +109,40 @@ def main(config: DictConfig):
 
         # Test
         test_loss, test_accuracy = trainer.test(test_dataloader)
+
+        # Track test progress
         avg_test_loss = test_loss / len(test_dataloader)
-        if verbose and epoch % 100 == 0:
+        if verbose and (epoch + 1) % print_freq == 0:
             print(f"avg test loss: {avg_test_loss:>7f}")
             print(f"avg test accuracy: {test_accuracy:>7f}")
         curves["test_losses"].append(avg_test_loss)
         curves["test_accuracies"].append(test_accuracy)
 
+        # Model checkpoint
+        if (epoch + 1) % config.learning.checkpoint_freq == 0:
+            checkpoint = {
+                'epoch': epoch + 1,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': trainer.optimizer.state_dict(),
+                'avg_loss': avg_test_loss,
+            }
+            print("Saving model checkpoint.")
+            torch.save(checkpoint, config.filepaths.checkpoint_fn)
+            print(f"Wrote checkpoint to {os.path.join(os.getcwd(), config.filepaths.checkpoint_fn)}")            
+            util.save_curves(curves, curves_fn)
+
         # Check if early stopping criteria met
-        if early_stopper.should_stop(avg_test_loss, test_accuracy):
+        if early_stopping and early_stopper.should_stop(avg_test_loss, test_accuracy):
             print(f"Early stopping after {epoch+1} epochs.")
             break
 
-        if verbose and epoch % 100 == 0:
+        if verbose and (epoch + 1) % print_freq == 0:
             print("-------------------------------")
 
     # Save curves
-    df_curves = pd.DataFrame(curves)
-    df_curves["epoch"] = df_curves.index + 1
-    df_curves.to_csv(losses_fn, index=False)
-    print(f"Wrote curves to {os.path.join(os.getcwd(), losses_fn)}.")
+    util.save_curves(curves, curves_fn)
 
-    # Save model
+    # Save final model
     torch.save(model.state_dict(), config.filepaths.model_fn)
     print(f"Wrote model to {os.path.join(os.getcwd(), config.filepaths.model_fn)}")
 
