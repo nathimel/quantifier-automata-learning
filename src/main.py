@@ -94,14 +94,14 @@ def main(config: DictConfig):
 
     for epoch in range(epochs):
         if verbose and epoch % print_freq == 0:
-            print(f"Epoch {epoch+1}/{epochs}\n-------------------------------")
+            print(f"Epoch {epoch}/{epochs}\n-------------------------------")
 
         # Train
         train_loss, train_accuracy = trainer.train(train_dataloader)
 
         # Track training progress
         avg_train_loss = train_loss / len(train_dataloader)
-        if verbose and (epoch + 1) % print_freq == 0:
+        if verbose and (epoch) % print_freq == 0:
             print(f"avg train loss: {avg_train_loss:>7f}")
             print(f"avg train accuracy: {train_accuracy:>7f}")
         curves["train_losses"].append(avg_train_loss)
@@ -112,7 +112,7 @@ def main(config: DictConfig):
 
         # Track test progress
         avg_test_loss = test_loss / len(test_dataloader)
-        if verbose and (epoch + 1) % print_freq == 0:
+        if verbose and (epoch) % print_freq == 0:
             print(f"avg test loss: {avg_test_loss:>7f}")
             print(f"avg test accuracy: {test_accuracy:>7f}")
         curves["test_losses"].append(avg_test_loss)
@@ -136,7 +136,7 @@ def main(config: DictConfig):
             print(f"Early stopping after {epoch+1} epochs.")
             break
 
-        if verbose and (epoch + 1) % print_freq == 0:
+        if verbose and (epoch) % print_freq == 0:
             print("-------------------------------")
 
     # Save curves
