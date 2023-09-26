@@ -65,8 +65,7 @@ def main(config: DictConfig):
         print(f"Test data size = {len(test_data)}")
 
     # Set device
-    # device = torch.device("mps") # for some reason slower
-    device = torch.device("cpu")
+    device = torch.device(config.learning.device_name)
 
     # Quantifier PFA learning model
     model = PFAModel(
