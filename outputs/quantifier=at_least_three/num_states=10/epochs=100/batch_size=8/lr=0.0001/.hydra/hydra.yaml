@@ -111,11 +111,14 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task: []
+    task:
+    - quantifier=at_least_three
+    - learning.num_states=10
+    - learning.epochs=100
   job:
-    name: setup
+    name: main
     chdir: true
-    override_dirname: ''
+    override_dirname: quantifier=at_least_three
     id: ???
     num: ???
     config_name: config
@@ -147,8 +150,9 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=every/num_states=10/epochs=100.0/batch_size=8/lr=0.0001
+    output_dir: /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_three/num_states=10/epochs=100/batch_size=8/lr=0.0001
     choices:
+      quantifier: at_least_three
       hydra/env: default
       hydra/callbacks: null
       hydra/job_logging: default
