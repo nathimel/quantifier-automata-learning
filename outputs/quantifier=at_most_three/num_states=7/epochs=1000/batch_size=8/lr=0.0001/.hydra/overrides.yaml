@@ -2,3 +2,4 @@
 - quantifier=at_most_three
 - learning.num_states=7
 - learning.epochs=1000
+- learning.device_name=cuda:0
