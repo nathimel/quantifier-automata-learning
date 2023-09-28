@@ -3,10 +3,26 @@
 import torch
 from typing import Iterable
 
+##############################################################################
+# Helper functions
+##############################################################################
+
 def rand_init(shape: tuple[int], init_temperature: float) -> torch.Tensor:
     """Energy-based initialization from Normal distribution; higher init_temperature -> values are closer to 0."""
     return 1/init_temperature * torch.randn(shape)
 
+def stochastic_to_real(input_tensor):
+    zero_mask = (input_tensor == 0)
+    one_mask = (input_tensor == 1)
+
+    output_tensor = input_tensor.masked_fill(zero_mask, -100)
+    output_tensor = output_tensor.masked_fill(one_mask, 100)
+
+    return output_tensor
+
+##############################################################################
+# PFAModel class
+##############################################################################
 
 class PFAModel(torch.nn.Module):
 
@@ -65,6 +81,10 @@ class PFAModel(torch.nn.Module):
 
         # TODO: repeat experiments with initial probs parameterized.
 
+        # Initial state params:
+        # For each state, the probability of starting the sequence
+        self.i_logits = torch.nn.Parameter(rand_init([self.num_states], init_temperature))
+
         # Transition params:
         # The probability of transitioning to a state, given the current state and the current input string
         self.T_logits = torch.nn.Parameter(
@@ -77,19 +97,56 @@ class PFAModel(torch.nn.Module):
         self.f_logits = torch.nn.Parameter(rand_init([self.num_states], init_temperature))
 
         # Assume first state is always initial
-        init = torch.zeros(num_states)
-        init[0] = 1.
-        self.init = init
+        # init = torch.zeros(num_states)
+        # init[0] = 1.
+        # self.init = init
+
+    @classmethod
+    def from_probs(cls, transition: torch.Tensor, final: torch.Tensor, initial: torch.Tensor = None, alphabet: list[int] = [0,1]):
+        """Takes stochastic parameters and initializes a PFAModel with the appropriate corresponding logits.
+        
+        Args:
+            transition: a tensor of shape `[states, symbols, states]` representing the state transition probabilities
+
+            final: a tensor of shape `[states]` representing the final probabilities
+
+            initial: a tensor of shape `[states]` representing the initial probabilities. Default is None, and will be a 1-hot vector on the first state.            
+
+            alphabet: a list of ints representing the symbols of the alphabet
+        """
+
+        if initial is None:
+            initial = torch.zeros_like(final)
+            initial[0] = 1.
+
+        num_states = len(final)
+        pfa = cls(
+            num_states=num_states, 
+            alphabet=alphabet, 
+            init_temperature=1e-2,
+        )
+        # softmax is not invertible, but since we're creating delta functions, we can just choose very large (100) for 1, and very negative (-100) for 0.
+        i_logits = torch.nn.Parameter(stochastic_to_real(initial))
+        T_logits = torch.nn.Parameter(stochastic_to_real(transition))
+        f_logits = torch.nn.Parameter(stochastic_to_real(final))
+
+        pfa.i_logits = i_logits
+        pfa.T_logits = T_logits
+        pfa.f_logits = f_logits
+
+        return pfa
+
 
     def forward_algorithm(self, sequence: torch.Tensor) -> torch.Tensor:
         """Compute the (log) probability of a sequence under the PFA using the Forward algorithm (Vidal et al., 2005a, Section 3).
         """
-
         num_transitions = len(sequence) + 1
+
+        # shape `[num_transitions, num_states]`
         log_alpha = torch.log(torch.zeros(num_transitions, self.num_states, requires_grad=True, device=next(self.parameters()).device))
 
-        # Initialize the forward probabilities for the first position
-        log_alpha[0] = torch.log(self.init)
+        # Obtain the forward probabilities for the first position
+        log_alpha[0] = torch.nn.functional.logsigmoid(self.i_logits)
 
         # Create a tensor for sequence symbols
         symbol_indices = torch.tensor([self.symbol_to_index(symbol) for symbol in sequence], dtype=torch.long)
