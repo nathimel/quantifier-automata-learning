@@ -1,0 +1,3 @@
+- quantifier=at_least_three
+- learning.num_states=10
+- learning.epochs=100

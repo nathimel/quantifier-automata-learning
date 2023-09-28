@@ -1,0 +1,5 @@
+quantifier=at_least_six_or_at_most_two learning.num_states=10 learning.epochs=2000
+quantifier=at_least_four learning.num_states=10 learning.epochs=2000
+quantifier=at_most_three learning.num_states=10 learning.epochs=2000
+quantifier=at_least_three learning.num_states=10 learning.epochs=2000
+quantifier=first_three learning.num_states=10 learning.epochs=2000

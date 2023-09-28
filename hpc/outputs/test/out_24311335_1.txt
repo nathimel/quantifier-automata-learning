@@ -1,0 +1,127 @@
+Running job on host hpc3-22-10
+SLURM_NTASKS is 1
+I am task SLURM_ARRAY_TASK_ID = 1
+I am job SLURM_JOB_ID = 24311436
+I am array job SLURM_ARRAY_JOB_ID = 24311335
+no change     /opt/apps/miniconda3/4.8.5/condabin/conda
+no change     /opt/apps/miniconda3/4.8.5/bin/conda
+no change     /opt/apps/miniconda3/4.8.5/bin/conda-env
+no change     /opt/apps/miniconda3/4.8.5/bin/activate
+no change     /opt/apps/miniconda3/4.8.5/bin/deactivate
+no change     /opt/apps/miniconda3/4.8.5/etc/profile.d/conda.sh
+no change     /opt/apps/miniconda3/4.8.5/etc/fish/conf.d/conda.fish
+no change     /opt/apps/miniconda3/4.8.5/shell/condabin/Conda.psm1
+no change     /opt/apps/miniconda3/4.8.5/shell/condabin/conda-hook.ps1
+no change     /opt/apps/miniconda3/4.8.5/lib/python3.8/site-packages/xontrib/conda.xsh
+no change     /opt/apps/miniconda3/4.8.5/etc/profile.d/conda.csh
+no change     /data/homezvol0/nimel/.bashrc
+No action taken.
+
+python src/setup.py "$@"
+Hydra leaf dir exists or was created successfully at /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001.
+
+python src/main.py "$@"
+Training data size = 1888
+Test data size = 810
+Epoch 0/100
+-------------------------------
+avg train loss: 0.693154
+avg train accuracy: 0.483051
+avg test loss: 0.693149
+avg test accuracy: 0.493827
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 10/100
+-------------------------------
+avg train loss: 0.692730
+avg train accuracy: 0.628708
+avg test loss: 0.692832
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 20/100
+-------------------------------
+avg train loss: 0.690426
+avg train accuracy: 0.640890
+avg test loss: 0.691069
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 30/100
+-------------------------------
+avg train loss: 0.685943
+avg train accuracy: 0.640890
+avg test loss: 0.687571
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 40/100
+-------------------------------
+avg train loss: 0.679894
+avg train accuracy: 0.640890
+avg test loss: 0.683048
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 50/100
+-------------------------------
+avg train loss: 0.673167
+avg train accuracy: 0.640890
+avg test loss: 0.677931
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 60/100
+-------------------------------
+avg train loss: 0.666351
+avg train accuracy: 0.640890
+avg test loss: 0.673574
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 70/100
+-------------------------------
+avg train loss: 0.660031
+avg train accuracy: 0.640890
+avg test loss: 0.668428
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 80/100
+-------------------------------
+avg train loss: 0.654325
+avg train accuracy: 0.640890
+avg test loss: 0.664270
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Epoch 90/100
+-------------------------------
+avg train loss: 0.649279
+avg train accuracy: 0.640890
+avg test loss: 0.662918
+avg test accuracy: 0.601235
+-------------------------------
+Saving model checkpoint.
+Wrote checkpoint to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/checkpoint.pt
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Wrote curves to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/curves.csv.
+Wrote model to /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_least_six_or_at_most_two/num_states=10/epochs=100/batch_size=8/lr=0.0001/model.pt

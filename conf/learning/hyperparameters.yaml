@@ -1,4 +1,4 @@
-device_name: "cuda:0" # sephiroth A30
+device_name: "cpu" # for sephiroth, use cuda:0 or cuda:1. for HPC3, use cuda.
 
 epochs: 1e2
 optimizer: Adam
