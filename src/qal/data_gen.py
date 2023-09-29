@@ -54,6 +54,9 @@ class QuantifierStringDataset(Dataset):
 
             balanced: whether to balance the dataset by downsampling instances of the majority label.
         """
+        if quantifier_name not in string_df.columns:
+            raise ValueError(f"There are no {quantifier_name} labels in the dataset.")
+
         if balanced:
             positive_examples = string_df[string_df[quantifier_name] == True]
             negative_examples = string_df[string_df[quantifier_name] == False]

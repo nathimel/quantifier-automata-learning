@@ -61,17 +61,18 @@ class PFAModel(torch.nn.Module):
         num_states: int,
         alphabet: Iterable[int],
         init_temperature: float = 1e-2,
+        param_initial: bool = False,
         ) -> None:
         """Construct a PFA as a nn.Module.
 
         Args:
-            num_states: the number of states of the pfa
+            num_states (int): the number of states of the pfa
 
-            alphabet: a set of symbols
+            alphabet (Iterable): a set of symbols
 
-            T: a Tensor of shape `[num_states, len(alphabet), num_states]`, the state-transition probabilities
+            init_temperature (float): temperature parameter for random initialization
 
-            final: a Tensor of shape `[num_states,]`, the final state probabilities
+            param_initial (bool): whether to learn the initial state probabilities. Default is False, and the initial state will be fixed to the first state.
         """
         super(PFAModel, self).__init__()
 
@@ -79,11 +80,16 @@ class PFAModel(torch.nn.Module):
         self.alphabet = tuple(sorted(set(alphabet)))        
         self.num_symbols = len(self.alphabet)
 
-        # TODO: repeat experiments with initial probs parameterized.
-
         # Initial state params:
         # For each state, the probability of starting the sequence
-        self.i_logits = torch.nn.Parameter(rand_init([self.num_states], init_temperature))
+        self.param_initial = param_initial
+        if self.param_initial:
+            self.i_logits = torch.nn.Parameter(rand_init([self.num_states], init_temperature))
+        else:
+            # Assume first state is always initial
+            init = torch.zeros(num_states)
+            init[0] = 1.
+            self.init = init
 
         # Transition params:
         # The probability of transitioning to a state, given the current state and the current input string
@@ -95,11 +101,6 @@ class PFAModel(torch.nn.Module):
         # Final states params:
         # For each state, the probability that it is in the set of final states
         self.f_logits = torch.nn.Parameter(rand_init([self.num_states], init_temperature))
-
-        # Assume first state is always initial
-        # init = torch.zeros(num_states)
-        # init[0] = 1.
-        # self.init = init
 
     @classmethod
     def from_probs(cls, transition: torch.Tensor, final: torch.Tensor, initial: torch.Tensor = None, alphabet: list[int] = [0,1]):
@@ -124,6 +125,7 @@ class PFAModel(torch.nn.Module):
             num_states=num_states, 
             alphabet=alphabet, 
             init_temperature=1e-2,
+            param_initial=True,            
         )
         # softmax is not invertible, but since we're creating delta functions, we can just choose very large (100) for 1, and very negative (-100) for 0.
         i_logits = torch.nn.Parameter(stochastic_to_real(initial))
@@ -146,7 +148,10 @@ class PFAModel(torch.nn.Module):
         log_alpha = torch.log(torch.zeros(num_transitions, self.num_states, requires_grad=True, device=next(self.parameters()).device))
 
         # Obtain the forward probabilities for the first position
-        log_alpha[0] = torch.nn.functional.logsigmoid(self.i_logits)
+        if self.param_initial:
+            log_alpha[0] = torch.nn.functional.logsigmoid(self.i_logits)
+        else:
+            log_alpha[0] = torch.log(self.init)
 
         # Create a tensor for sequence symbols
         symbol_indices = torch.tensor([self.symbol_to_index(symbol) for symbol in sequence], dtype=torch.long)

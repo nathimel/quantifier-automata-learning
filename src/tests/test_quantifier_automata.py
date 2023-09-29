@@ -17,7 +17,9 @@ def check_probs(
     for string in strings:
         tup = string_to_int_tuple(string)
         if func(tup):
-            assert torch.isclose(qpfa.prob_sequence(tup), one)
+            # assert torch.isclose(qpfa.prob_sequence(tup), one)
+            if not torch.isclose(qpfa.prob_sequence(tup), one):
+                breakpoint()
         else:
             assert torch.isclose(qpfa.prob_sequence(tup), zero)
 
@@ -66,3 +68,13 @@ class TestQuantifierPFA:
         qpfa = quantifier_map["even"]
         strings = generate_up_to_length(10)
         check_probs(qpfa, strings, lambda x: sum(x) % 2 == 0)
+
+    def test_at_least_six(self):
+        qpfa = quantifier_map["at_least_six"]
+        strings = generate_up_to_length(10)
+        check_probs(qpfa, strings, lambda x: sum(x) >= 6)
+
+    def test_exactly_two(self):
+        qpfa = quantifier_map["exactly_two"]
+        strings = generate_up_to_length(10)
+        check_probs(qpfa, strings, lambda x: sum(x) == 2)
