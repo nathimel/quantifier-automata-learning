@@ -7,7 +7,7 @@ learning:
     overwrite: false
   print_frequency: 10
   device_name: cpu
-  epochs: 1000
+  epochs: 250
   optimizer: Adam
   learning_rate: 0.001
   batch_size: 8
@@ -20,7 +20,7 @@ learning:
   num_states: 10
   threshold: 0.5
 quantifier:
-  name: at_most_three
+  name: at_least_six_or_at_most_two
 seed: 2
 verbose: true
 filepaths:

@@ -21,7 +21,7 @@ learning:
   threshold: 0.5
 quantifier:
   name: at_least_six_or_at_most_two
-seed: 42
+seed: 4
 verbose: true
 filepaths:
   bitstrings_dir: data/bitstrings

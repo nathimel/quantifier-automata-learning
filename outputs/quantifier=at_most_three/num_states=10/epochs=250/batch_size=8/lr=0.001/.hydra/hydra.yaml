@@ -114,9 +114,9 @@ hydra:
     task:
     - quantifier=at_most_three
     - learning.num_states=10
-    - learning.epochs=1000
+    - learning.epochs=250
     - learning.learning_rate=1e-3
-    - seed=2
+    - seed=3
   job:
     name: main
     chdir: true
@@ -152,7 +152,7 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_most_three/num_states=10/epochs=1000/batch_size=8/lr=0.001
+    output_dir: /dfs6/pub/nimel/projects/quantifier-automata-learning/outputs/quantifier=at_most_three/num_states=10/epochs=250/batch_size=8/lr=0.001
     choices:
       quantifier: at_most_three
       hydra/env: default

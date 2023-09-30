@@ -8,7 +8,7 @@
 
 ## ---------------------------- ARRAY CONFIGS ----------------------------------
 #SBATCH --job-name=array_curve   ## name of the job.
-#SBATCH --array=1-5          ## number of array tasks
+#SBATCH --array=1-16          ## number of array tasks
 # Slurm automatically sets $SLURM_ARRAY_TASK_ID variable 
 # Can use $SLURM_ARRAY_TASK_ID to specify the file names and other variables.
 ## -----------------------------------------------------------------------------
