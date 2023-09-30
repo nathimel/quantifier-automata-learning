@@ -1,3 +1,0 @@
-- quantifier=at_least_six_or_at_most_two
-- learning.num_states=10
-- learning.epochs=100

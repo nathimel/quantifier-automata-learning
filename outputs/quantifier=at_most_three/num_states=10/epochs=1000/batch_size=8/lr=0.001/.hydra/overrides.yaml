@@ -1,5 +1,0 @@
-- quantifier=at_most_three
-- learning.num_states=10
-- learning.epochs=1000
-- learning.learning_rate=1e-3
-- seed=2

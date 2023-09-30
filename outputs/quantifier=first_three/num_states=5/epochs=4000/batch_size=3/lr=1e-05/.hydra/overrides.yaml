@@ -1,5 +1,0 @@
-- learning.patience=1000
-- learning.learning_rate=1e-5
-- quantifier=first_three
-- learning.num_states=5
-- learning.epochs=4000

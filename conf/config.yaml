@@ -42,7 +42,7 @@ filepaths:
   curve_subdir: seed=${seed}
 
   # for plots etc. that summarize experiment sweeps
-  experiment_subdir: quantifier=${quantifier.name}/num_states=${learning.num_states}/epochs=${learning.epochs}/batch_size=${learning.batch_size}/lr=${learning.learning_rate}
+  experiment_subdir: quantifier=${quantifier.name}/num_states=${learning.num_states}/epochs=${learning.epochs}/batch_size=${learning.batch_size}/lr=${learning.learning_rate}/seed=${seed}
 
   # where the current working directory will be when hydra is running
   leaf_subdir: ${filepaths.experiment_subdir}
