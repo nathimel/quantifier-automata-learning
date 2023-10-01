@@ -1,0 +1,36 @@
+learning:
+  data:
+    max_size: 2698
+    max_bitstring_length: 20
+    train_test_split: 0.7
+    balanced: true
+    overwrite: false
+  print_frequency: 10
+  device_name: cpu
+  epochs: 1000
+  optimizer: Adam
+  learning_rate: 0.001
+  batch_size: 8
+  early_stopping: false
+  patience: 100
+  loss_threshold: 0.02
+  accuracy_threshold: 0.996
+  checkpoint_freq: 10
+  init_temperature: 100000.0
+  num_states: 10
+  threshold: 0.5
+quantifier:
+  name: at_least_six_or_at_most_two
+seed: 2
+verbose: true
+filepaths:
+  bitstrings_dir: data/bitstrings
+  quantifier_data_dir: data/quantifier_data
+  curves_fn: curves.csv
+  checkpoint_fn: checkpoint.pt
+  model_fn: model.pt
+  curve_subdir: seed=${seed}
+  experiment_subdir: quantifier=${quantifier.name}/num_states=${learning.num_states}/epochs=${learning.epochs}/batch_size=${learning.batch_size}/lr=${learning.learning_rate}/seed=${seed}
+  leaf_subdir: ${filepaths.experiment_subdir}
+  hydra_run_root: outputs
+  hydra_sweep_root: multirun
