@@ -24,13 +24,13 @@ def main():
 
     # Assume we're interested in outputs, but can change to multirun
     root_dir = cfg.filepaths.hydra_run_root
-    leaf_dir = "main.log"
+    curves_fn = cfg.filepaths.curves_fn
     leaf_hydra_cfg_fn = ".hydra/config.yaml"
 
     # Collect all the results of individual training experiments
     experiment_results = []
     print(f"collecting all simulation data from {root_dir}.")
-    fns = list(Path(root_dir).rglob(leaf_dir))
+    fns = list(Path(root_dir).rglob(curves_fn))
     for path in tqdm(fns):
 
         parent = path.parent.absolute()
@@ -39,7 +39,7 @@ def main():
         leaf_cfg = omegaconf.OmegaConf.load(parent / leaf_hydra_cfg_fn)
 
         # Create dataframe
-        df = pd.read_csv(parent / cfg.filepaths.curves_fn)
+        df = pd.read_csv(parent / curves_fn)
 
         # Annotate with metadata from config
         df["quantifier"] = leaf_cfg.quantifier.name
